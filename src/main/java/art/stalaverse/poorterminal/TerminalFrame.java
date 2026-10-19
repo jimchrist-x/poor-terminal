@@ -9,6 +9,7 @@ import java.awt.BorderLayout;
 import javax.swing.JScrollPane;
 import java.awt.event.ActionEvent;
 
+import java.io.IOException;
 public class TerminalFrame extends JFrame {
   private JTextField inputField;
   private JButton sendButton;
@@ -37,8 +38,13 @@ public class TerminalFrame extends JFrame {
     terminalOutputArea.setEditable(false);
     sendButton = new JButton(BUTTON_LABEL);
     sendButton.addActionListener((ActionEvent event) -> {
-      // HANDLE THE OS CALLS
-      terminalOutputArea.append(inputField.getText() + "\n");
+      try {
+        terminalOutputArea.append(CommandExecutor.executeBashCommand(inputField.getText()));
+      } catch (IOException ioe) {
+        terminalOutputArea.append("Error: " + ioe.getMessage() + "\n");
+      } catch (InterruptedException ie) {
+        terminalOutputArea.append("Error: " + ie.getMessage() + "\n");
+      }
     });
     panel = new JPanel(new BorderLayout());
     panel.add(new JScrollPane(terminalOutputArea), BorderLayout.CENTER);
